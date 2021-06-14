@@ -25,6 +25,7 @@ namespace DiceRoller
             if (rollDefinition.Contains('D'))
             {
                 string[] DiceDefinition = rollDefinition.Split(new char[] { 'D' });
+                //TODO error tests
                 int NumberOfDices = int.Parse(DiceDefinition[0]);
                 int NumberOfFaces = int.Parse(DiceDefinition[1]);
                 for (int i = 0;i<NumberOfDices;i++)
