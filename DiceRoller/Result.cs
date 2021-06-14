@@ -19,8 +19,50 @@ namespace DiceRoller
 
         public override string ToString()
         {
-            //TODO
-            return Resultat.ToString();
+            if (string.IsNullOrWhiteSpace(ErrorCodes))
+            {
+                return Resultat.ToString();
+                //TODO add to this output the special results.
+            }
+            else
+            {
+                return ErrorCodes;
+            }
+        }
+
+        public void AddError(string newError)
+        {
+            if (!string.IsNullOrWhiteSpace(ErrorCodes))
+            {
+                ErrorCodes += ", ";
+            }
+            ErrorCodes += newError;
+        }
+
+        public void AddSpecialResult(string resultName, int value, bool isNegative)
+        {
+            if (SpecialResults.ContainsKey(resultName))
+            {
+                if (isNegative)
+                {
+                    SpecialResults[resultName] -= value;
+                }
+                else
+                {
+                    SpecialResults[resultName] += value;
+                }
+            }
+            else
+            {
+                if (isNegative)
+                {
+                    SpecialResults.Add(resultName, -value);
+                }
+                else
+                {
+                    SpecialResults.Add(resultName, value);
+                }
+            }
         }
     }
 }
