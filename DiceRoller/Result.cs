@@ -39,18 +39,30 @@ namespace DiceRoller
             ErrorCodes += newError;
         }
 
-        public void AddSpecialResult(string resultName, int value)
+        public void AddSpecialResult(string resultName, int value, bool isNegative)
         {
             if (SpecialResults.ContainsKey(resultName))
             {
-                SpecialResults[resultName] += value;
+                if (isNegative)
+                {
+                    SpecialResults[resultName] -= value;
+                }
+                else
+                {
+                    SpecialResults[resultName] += value;
+                }
             }
             else
             {
-                SpecialResults.Add(resultName, value);
+                if (isNegative)
+                {
+                    SpecialResults.Add(resultName, -value);
+                }
+                else
+                {
+                    SpecialResults.Add(resultName, value);
+                }
             }
         }
     }
 }
-
- 
