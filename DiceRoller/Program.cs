@@ -13,7 +13,7 @@ namespace DiceRoller
                 string Entry = Console.In.ReadLine();
                 if (Entry.Length > 0)
                 {
-                    int Result = Dice.Parse(Entry);
+                    Result Result = Dice.Parse(Entry);
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.Out.Write(Result.ToString() + Environment.NewLine + Environment.NewLine);
                 }
