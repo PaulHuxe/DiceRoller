@@ -21,8 +21,12 @@ namespace DiceRoller
         {
             if (string.IsNullOrWhiteSpace(ErrorCodes))
             {
-                return Resultat.ToString();
-                //TODO add to this output the special results.
+                string ReturnText = Resultat.ToString();
+                foreach(var x in this.SpecialResults)
+                {
+                    ReturnText += ", " + x.Key + ": " + x.Value.ToString();
+                }
+                return ReturnText;
             }
             else
             {
