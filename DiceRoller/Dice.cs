@@ -100,9 +100,25 @@ namespace DiceRoller
                 case "COIN":
                     RollCoin(resultat, isNegativeNumberOfDices);
                     break;
+                case "INSMV":
+                    RollInsMv(resultat, isNegativeNumberOfDices);
+                    break;
                 default:
                     resultat.AddError(specialDiceDefinition + " is not a recognized dice name");
                     break;
+            }
+        }
+
+        private static void RollInsMv(Result resultat, bool isNegativeNumberOfDices)
+        {
+            int Throw = 100 * RollDice(6) + 10 * RollDice(6) + RollDice(6);
+            if (isNegativeNumberOfDices)
+            {
+                resultat.Resultat -= Throw;
+            }
+            else
+            {
+                resultat.Resultat += Throw;
             }
         }
 
