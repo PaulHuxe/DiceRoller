@@ -11,14 +11,23 @@ namespace DiceRoller
         {
             entry = entry.Trim().ToUpper();
             // tip to manage the sustract sign
-            entry = entry.Replace("-", "+-");
-            string[] RollDefinitions = entry.Split(new char[] { '+' });
-            Result Resultat = new();
-            foreach (string S in RollDefinitions)
+            if (Char.IsDigit(entry[0]))
             {
-                Roll(S, Resultat);
+                entry = entry.Replace("-", "+-");
+                string[] RollDefinitions = entry.Split(new char[] { '+' });
+                Result Resultat = new();
+                foreach (string S in RollDefinitions)
+                {
+                    Roll(S, Resultat);
+                }
+                return Resultat;
             }
-            return Resultat;
+            else
+            {
+                //TODO managing the other functions
+
+                return new Result();
+            }
         }
 
         private static void Roll(string rollDefinition, Result resultat)
@@ -28,7 +37,7 @@ namespace DiceRoller
             {
                 if (rollDefinition.Contains('D'))
                 {
-                    string[] DiceDefinition = rollDefinition.Split(new char[] { 'D' });
+                    string[] DiceDefinition = rollDefinition.Split('D', 2);
                     bool HasNumberOfDice = int.TryParse(DiceDefinition[0], out int NumberOfDices);
                     if (!HasNumberOfDice)
                     {
@@ -36,11 +45,14 @@ namespace DiceRoller
                     }
                     else
                     {
+                        bool IsNegativeNumberOfDices = NumberOfDices < 0;
                         bool HasNumberOfFaces = int.TryParse(DiceDefinition[1], out int NumberOfFaces);
                         if (!HasNumberOfFaces)
                         {
-                            //TODO replace it with special dice management
-                            resultat.AddError(DiceDefinition[1] + " is not a valid number of faces");
+                            for (int i = 0; i < Math.Abs(NumberOfDices); i++)
+                            {
+                                RollSpecialDice(DiceDefinition[1], IsNegativeNumberOfDices, resultat);
+                            }
                         }
                         else
                         {
@@ -50,18 +62,18 @@ namespace DiceRoller
                             }
                             else
                             {
-                                if (NumberOfDices > 0)
-                                {
-                                    for (int i = 0; i < NumberOfDices; i++)
-                                    {
-                                        resultat.Resultat += RollDice(NumberOfFaces);
-                                    }
-                                }
-                                else
+                                if (IsNegativeNumberOfDices)
                                 {
                                     for (int i = 0; i < -NumberOfDices; i++)
                                     {
                                         resultat.Resultat -= RollDice(NumberOfFaces);
+                                    }
+                                }
+                                else
+                                {
+                                    for (int i = 0; i < NumberOfDices; i++)
+                                    {
+                                        resultat.Resultat += RollDice(NumberOfFaces);
                                     }
                                 }
                             }
@@ -78,6 +90,26 @@ namespace DiceRoller
         private static int RollDice(int numberOfFaces)
         {
             return Rand.Next(numberOfFaces) + 1;
+        }
+
+        private static void RollSpecialDice(string specialDiceDefinition, bool isNegativeNumberOfDices, Result resultat)
+        {
+            specialDiceDefinition = specialDiceDefinition.Trim();
+            switch (specialDiceDefinition)
+            {
+                case "COIN":
+                    RollCoin(resultat, isNegativeNumberOfDices);
+                    break;
+                default:
+                    resultat.AddError(specialDiceDefinition + " is not a recognized dice name");
+                    break;
+            }
+        }
+
+        private static void RollCoin(Result resultat, bool isNegativeNumberOfDices)
+        {
+            int Throw = RollDice(2);
+            resultat.AddSpecialResult(Throw == 1 ? "Head" : "Tail", 1, isNegativeNumberOfDices);
         }
     }
 }
