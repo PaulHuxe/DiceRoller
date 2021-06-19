@@ -10,24 +10,32 @@ namespace DiceRoller
         internal static Result Parse(string entry)
         {
             entry = entry.Trim().ToUpper();
+            Result Resultat = new();
             // tip to manage the sustract sign
             if (Char.IsDigit(entry[0]))
             {
                 entry = entry.Replace("-", "+-");
-                string[] RollDefinitions = entry.Split(new char[] { '+' });
-                Result Resultat = new();
+                string[] RollDefinitions = entry.Split('+');
                 foreach (string S in RollDefinitions)
                 {
                     Roll(S, Resultat);
                 }
-                return Resultat;
             }
             else
             {
-                //TODO managing the other functions
-
-                return new Result();
+                string[] Function = entry.Split(' ', 2);
+                switch(Function[0])
+                {
+                    case "?":
+                        Help.Display(Resultat);
+                        break;
+                    //TODO managing the other functions
+                    default:
+                        Resultat.AddError(Function[0] + " is not a valid function.");
+                        break;
+                }
             }
+            return Resultat;
         }
 
         private static void Roll(string rollDefinition, Result resultat)
