@@ -9,8 +9,14 @@ namespace DiceRoller
 
         internal static Result Parse(string entry)
         {
-            entry = entry.Trim().ToUpper();
             Result Resultat = new();
+            Parse(entry, Resultat);
+            return Resultat;
+        }
+
+        internal static void Parse(string entry, Result Resultat)
+        {
+            entry = entry.Trim().ToUpper();
             // tip to manage the sustract sign
             if (Char.IsDigit(entry[0]))
             {
@@ -29,13 +35,18 @@ namespace DiceRoller
                     case "?":
                         Help.Display(Resultat);
                         break;
-                    //TODO managing the other functions
+                    case "*":
+                        string[] MacroData = Function[1].Split(' ', 2);
+                        Macros.Add(MacroData[0], MacroData[1], Resultat);
+                        break;
+                    case "/":
+                        Macros.Roll(Function[1], Resultat);
+                        break;
                     default:
                         Resultat.AddError(Function[0] + " is not a valid function.");
                         break;
                 }
             }
-            return Resultat;
         }
 
         private static void Roll(string rollDefinition, Result resultat)
